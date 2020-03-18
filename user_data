@@ -9,7 +9,7 @@ aws configure set aws_access_key_id #################
 aws configure set aws_secret_access_key ########################
 aws configure set default.region us-east-1
 
-aws s3 sync s3://weslauth/ /home/ubuntu/.ssh/
+aws s3 sync s3://slothtopia/ /home/ubuntu/.ssh/
 chmod 600 /home/ubuntu/.ssh/id_rsa
 eval `ssh-agent -s`
 ssh-add /home/ubuntu/.ssh/id_rsa
