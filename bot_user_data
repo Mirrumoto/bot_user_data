@@ -1,0 +1,40 @@
+#!/bin/bash
+sudo apt update -y
+
+sudo apt install python3-pip -y
+sudo pip3 install awscli --upgrade
+
+
+aws configure set aws_access_key_id #################
+aws configure set aws_secret_access_key ########################
+aws configure set default.region us-east-1
+
+aws s3 sync s3://weslauth/ /home/ubuntu/.ssh/
+chmod 600 /home/ubuntu/.ssh/id_rsa
+eval `ssh-agent -s`
+ssh-add /home/ubuntu/.ssh/id_rsa
+chown ubuntu: /home/ubuntu/.ssh/id_rsa
+
+ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+
+git clone git@github.com:slothtopia/bot.git /home/ubuntu/bot
+pip3 install discord.py==0.16.12
+pip3 install mysql-connector
+
+sudo apt install mysql-server -y
+
+
+DBPASS="##############"
+sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DBPASS';"
+sudo mysql -u root -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+sudo mysql -u root -e "DELETE FROM mysql.user WHERE User=''"
+sudo mysql -u root -e "DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'"
+sudo mysql -u root -e "FLUSH PRIVILEGES"
+
+sudo mysql -u root -e "CREATE DATABASE bot;"
+
+
+sudo chown -R ubuntu /home/ubuntu/bot/
+
+python3 /home/ubuntu/bot/bot.py
